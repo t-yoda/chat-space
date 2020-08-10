@@ -1,1 +1,21 @@
-<メイン画面>
+.chat-main
+  .main-header
+    .main-header__left-box
+      .main-header__left-box__group-name
+        = @group.name
+      .main-header__left-box__member-list
+        member:
+        - @group.users.each do |user|
+          = user.name
+    = link_to edit_group_path(@group), class: "main-header__edit-box" do
+      Edit
+  .messages{data:{group:{id: "#{@group.id}"}}}
+    = render partial: 'message', collection: @messages
+  .form
+    = form_for [@group, @message], html: { class: "new-message"} do |f|
+      .new-message__input-box
+        = f.text_field :content, class: 'new-message__input-box__text', placeholder: 'type a message'
+        = f.label :image, class: 'new-message__input-box__text__image' do
+          = icon('fas', 'image')
+          = f.file_field :image, class: 'new-message__input-box__text__image__file'
+      = f.submit 'Send', class: 'new-message__submit'
