@@ -2,34 +2,40 @@ require 'rails_helper'
 
 RSpec.describe Message, type: :model do
   describe '#create' do
-    context 'messageを保存できる場合' do
-      it 'contentがあれば保存できること' do
-        expect(build(:message, image: nil)).to be_valid
+    context 'can save' do
+      it 'is valid only with text' do
+        message = build(:message, image: nil)
+        expect(message).to be_valid
       end
 
-      it 'imageがあれば保存できること' do
-        expect(build(:message, content: nil)).to be_valid
+      it 'is valid only with image' do
+        message_c = create(:message, text: nil)
+        message_b = build(:message, text: nil)
+        # binding.pry
+        expect(message_c).to be_valid
+        expect(message_b).to be_valid
       end
 
-      it 'content と imageがあれば保存できること' do
-        expect(build(:message)).to be_valid
+      it 'is valid with both text and image' do
+        message = build(:message)
+        expect(message).to be_valid
       end
     end
 
-    context 'messageを保存できない場合' do
-      it ' content と imageが両方空だと保存できないこと' do
-        message = build(:message, content: nil, image: nil)
+    context 'can not save' do
+      it 'is invalid without text nor image' do
+        message = build(:message, text: nil, image: nil)
         message.valid?
-        expect(message.errors[:content]).to include("を入力してください")
+        expect(message.errors[:text]).to include("を入力してください")
       end
 
-      it 'group_idが無いと保存できないこと' do
+      it 'is invalid without group_id' do
         message = build(:message, group_id: nil)
         message.valid?
         expect(message.errors[:group]).to include("を入力してください")
       end
 
-      it ' user_idが無いと保存できないこと' do
+      it 'is invalid without user_id' do
         message = build(:message, user_id: nil)
         message.valid?
         expect(message.errors[:user]).to include("を入力してください")
